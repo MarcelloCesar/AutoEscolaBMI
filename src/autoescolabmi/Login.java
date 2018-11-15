@@ -5,7 +5,12 @@
  */
 package autoescolabmi;
 
+import db.UsuarioDAO;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import javax.swing.JOptionPane;
+import model.Usuario;
 
 /**
  *
@@ -13,27 +18,86 @@ import javax.swing.JOptionPane;
  */
 public class Login extends javax.swing.JDialog {
 
-    private final String usuarioPadrao;
-    private final String senhaPadrao;
+    private Usuario usuarioAutenticado;
     private boolean usuarioLogado;
     
     private void fazerLogin() throws Exception{
-        String usuario = txtUsuario.getText();
-        String senha   = txtSenha.getText();
+        Usuario usuario = new Usuario();
+        usuario.setLogin(txtUsuario.getText());
+        usuario.setSenha(txtSenha.getText());       
         
         //Verifica o usuário e a senha
-        if(usuario.equals(usuarioPadrao) && senha.equals(senhaPadrao)){
-            usuarioLogado = true;
-            dispose();
-        } else {
-            throw new Exception("Usuário e/ou Senha incorretos, por favor tente novamente.");
-        }
+        this.autenticar(usuario);
+        this.verificaPermissoesUsuario();    
+        
+        usuarioLogado = true;
+        dispose(); 
     }   
     
     public boolean estaLogado(){
         return this.usuarioLogado;
     }
     
+    private void autenticar(Usuario usuario) throws Exception{
+        
+        Usuario usuarioBanco = new UsuarioDAO().procurarLogin(usuario.getLogin());
+        
+        if(usuarioBanco == null){
+            throw new Exception("Usuario não encontrado");
+            
+        } else if(!usuarioBanco.getSenha().equals(usuario.getSenha())){
+            throw new Exception("Senha digitada incorretamente");
+            
+        }
+        
+        this.usuarioAutenticado = usuarioBanco;                   
+    }
+    
+    private void verificaPermissoesUsuario() throws Exception{
+        if(this.usuarioAutenticado == null){
+            throw new Exception ("Ocorreu um erro na autenticação do usuário");
+        }
+        
+        Date hoje = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+        if(this.usuarioAutenticado.getDataInicio() != null){
+            if(this.usuarioAutenticado.getDataInicio().getTime() < hoje.getTime()){
+                String exc = "Usuário não tem permissão para acessar o sistema nesta data.\n" +
+                             "Data início da vigência: " + df.format(this.usuarioAutenticado.getDataInicio());
+            
+                throw new Exception (exc);
+            }
+        }
+        
+        if(this.usuarioAutenticado.getDataFim() != null){
+            if(this.usuarioAutenticado.getDataFim().getTime() > hoje.getTime()){
+                String exc = "Usuário não tem permissão para acessar o sistema nesta data.\n" +
+                             "Data fim da vigência: " + df.format(this.usuarioAutenticado.getDataFim());
+            
+                throw new Exception (exc);
+            }
+        }
+        /*
+        df = new SimpleDateFormat("HH:mm");
+        Calendar agora = Calendar.getInstance();
+        if(this.usuarioAutenticado.getHorarioFim()!= null){
+            if(this.usuarioAutenticado.getHorarioFim().getTime() > (agora.get(Calendar.MINUTE) * 60000 + agora.get(Calendar.HOUR_OF_DAY) * 60000 * 60)){
+                String exc = "Usuário não tem permissão para acessar o sistema neste horário.\n" +
+                             "Horário fim da vigência: " + df.format(this.usuarioAutenticado.getHorarioFim());
+            
+                throw new Exception (exc);
+            }
+        }
+        
+        if(this.usuarioAutenticado.getHorarioInicio() != null){
+            if(this.usuarioAutenticado.getHorarioInicio().getTime() <(agora.get(Calendar.MINUTE) * 60000 + agora.get(Calendar.HOUR_OF_DAY) * 60000 * 60)){
+                String exc = "Usuário não tem permissão para acessar o sistema neste horário.\n" +
+                             "Horário início da vigência: " + df.format(this.usuarioAutenticado.getHorarioInicio());
+            
+                throw new Exception (exc);
+            }
+        }*/
+    }
     
     /**
      * Creates new form Login
@@ -44,8 +108,6 @@ public class Login extends javax.swing.JDialog {
         super.setResizable(false);
         super.setLocationRelativeTo(parent);
         
-        this.usuarioPadrao = "Usuario";
-        this.senhaPadrao   = "Senha";
         this.usuarioLogado = false;
         
         initComponents();
@@ -66,7 +128,7 @@ public class Login extends javax.swing.JDialog {
         jLabel4 = new javax.swing.JLabel();
         btnEntrar = new javax.swing.JButton();
         txtUsuario = new javax.swing.JTextField();
-        txtSenha = new javax.swing.JTextField();
+        txtSenha = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -85,14 +147,15 @@ public class Login extends javax.swing.JDialog {
             }
         });
 
-        txtUsuario.setText("Usuario");
+        txtUsuario.setText("ADMIN");
         txtUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtUsuarioActionPerformed(evt);
             }
         });
 
-        txtSenha.setText("Senha");
+        txtSenha.setText("ADMIN");
+        txtSenha.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         txtSenha.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtSenhaActionPerformed(evt);

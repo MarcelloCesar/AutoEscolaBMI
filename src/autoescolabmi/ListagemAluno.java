@@ -5,6 +5,7 @@
  */
 package autoescolabmi;
 
+import model.Aluno;
 import javax.swing.JOptionPane;
 
 /**
