@@ -5,6 +5,7 @@
  */
 package autoescolabmi;
 
+import model.Aluno;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

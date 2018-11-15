@@ -5,6 +5,9 @@
  */
 package autoescolabmi;
 
+import model.Aluno;
+import model.Veiculo;
+import model.Instrutor;
 import java.util.List;
 import java.util.LinkedList;
 

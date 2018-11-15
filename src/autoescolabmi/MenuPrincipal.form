@@ -71,7 +71,7 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
-    <Property name="title" type="java.lang.String" value="Auto Escola Dirigir"/>
+    <Property name="title" type="java.lang.String" value="Auto Escola BMI"/>
     <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>

@@ -5,6 +5,7 @@
  */
 package autoescolabmi;
 
+import model.Instrutor;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JOptionPane;
