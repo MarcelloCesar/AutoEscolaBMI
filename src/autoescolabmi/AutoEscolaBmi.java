@@ -37,5 +37,5 @@ public class AutoEscolaBmi {
     
     public static void main(String args[]){
         new AutoEscolaBmi();
-    }
+    }    
 }

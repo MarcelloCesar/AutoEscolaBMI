@@ -7,7 +7,6 @@ package db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -15,14 +14,15 @@ public abstract class DAO<E> {
 
     public abstract boolean inserir(E e) throws Exception;
     public abstract boolean alterar(E e) throws Exception;
-    public abstract boolean excluir(E e) throws Exception;
+    public abstract boolean excluir(E e) throws Exception;    
     //public abstract E find(E e) throws Exception;
     public abstract List<E> listar();
     
     protected Connection conn; 
+    protected String tabelaBanco;
     
     public DAO() throws Exception{
-        String url = "jdbc:mysql://localhost:3307/autoescolabmi";
+        String url = "jdbc:mysql://127.0.0.1:3307/autoescolabmi";
         String user = "root";
         String password = "usbw";
         try{
@@ -35,14 +35,15 @@ public abstract class DAO<E> {
         }
     }
     
-    protected boolean executeUpdate(PreparedStatement stmt) throws Exception{
-        try{
-            stmt.executeUpdate();
-        } catch (SQLException exc){
-            
-        }
-        return false;
+    public void disableAutoCommit() throws SQLException{
+        this.conn.setAutoCommit(false);
     }
     
+    public void commitWork() throws SQLException{
+        this.conn.commit();
+    }
     
+    public void rollBackTransaction() throws SQLException{
+        this.conn.rollback();
+    }
 }

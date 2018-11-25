@@ -17,6 +17,7 @@ public class UsuarioDAO extends DAO<Usuario> {
     
     public UsuarioDAO() throws Exception{
         super();
+        this.tabelaBanco = "ACESSO";
     }
     
     @Override
@@ -36,7 +37,7 @@ public class UsuarioDAO extends DAO<Usuario> {
         stmt.setDate(6, new java.sql.Date(e.getDataInicio().getTime()));
         stmt.setDate(7, new java.sql.Date(e.getDataFim().getTime()));            
         stmt.executeUpdate();
-
+        
         return true;
     }   
     
@@ -127,5 +128,6 @@ public class UsuarioDAO extends DAO<Usuario> {
             usuario.setHorarioInicio(result.getTime("HORARIOINICIO"));           
         }
         return usuario;        
-    }           
+    }   
 }
+

@@ -218,7 +218,7 @@ public class Login extends javax.swing.JDialog {
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
         try{
-            this.fazerLogin();
+            this.fazerLogin();            
         } catch (Exception e){
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
