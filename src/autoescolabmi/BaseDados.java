@@ -5,11 +5,14 @@
  */
 package autoescolabmi;
 
+import db.VeiculoDAO;
 import model.Aluno;
 import model.Veiculo;
 import model.Instrutor;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  *
@@ -19,12 +22,13 @@ public class BaseDados {
     private List<Aluno> lstAlunos;    
     private List<Veiculo> lstVeiculos;
     private List<Instrutor> lstInstrutor;
+    private VeiculoDAO veicDAO;
     
     public BaseDados(){
+        this.veicDAO      = new VeiculoDAO();
         this.lstAlunos    = new LinkedList<>();
         this.lstAlunos    = org.jdesktop.observablecollections.ObservableCollections.observableList(this.lstAlunos);
-        this.lstVeiculos  = new LinkedList<>();
-        this.lstVeiculos  = org.jdesktop.observablecollections.ObservableCollections.observableList(this.lstVeiculos);
+        this.lstVeiculos  = veicDAO.listar();
         this.lstInstrutor = new LinkedList<>();
         this.lstInstrutor = org.jdesktop.observablecollections.ObservableCollections.observableList(this.lstInstrutor);
     }    

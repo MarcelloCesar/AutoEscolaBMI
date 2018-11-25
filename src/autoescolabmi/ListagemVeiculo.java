@@ -5,6 +5,7 @@
  */
 package autoescolabmi;
 
+import db.VeiculoDAO;
 import model.Veiculo;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,11 +20,18 @@ public class ListagemVeiculo extends javax.swing.JInternalFrame {
     private AreaDeTrabalho a;
     private Veiculo veic;
     private int selected;
+    private VeiculoDAO veicDAO;
     /**
      * Creates new form ListagemVeiculo
      */
     public ListagemVeiculo(AreaDeTrabalho a) {
         this.a = a;
+        try{
+            veicDAO = new VeiculoDAO();
+        }catch(Exception ex)
+        {
+            ex.getMessage();
+        }
         initComponents();
     }
 
@@ -37,7 +45,7 @@ public class ListagemVeiculo extends javax.swing.JInternalFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        lstVeiculos = lstVeiculos = AutoEscolaBmi.getBaseDados().getListaVeiculos();
+        lstVeiculo = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : ((javax.persistence.Query)null).getResultList();
         scpVeiculo = new javax.swing.JScrollPane();
         tbVeiculo = new javax.swing.JTable();
         btOk = new javax.swing.JButton();
@@ -63,15 +71,15 @@ public class ListagemVeiculo extends javax.swing.JInternalFrame {
             }
         });
 
-        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, lstVeiculos, tbVeiculo);
-        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${marca}"));
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, lstVeiculo, tbVeiculo);
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${ano}"));
+        columnBinding.setColumnName("Ano");
+        columnBinding.setColumnClass(String.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${marca}"));
         columnBinding.setColumnName("Marca");
         columnBinding.setColumnClass(String.class);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${modelo}"));
         columnBinding.setColumnName("Modelo");
-        columnBinding.setColumnClass(String.class);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${ano}"));
-        columnBinding.setColumnName("Ano");
         columnBinding.setColumnClass(String.class);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${cor}"));
         columnBinding.setColumnName("Cor");
@@ -116,7 +124,7 @@ public class ListagemVeiculo extends javax.swing.JInternalFrame {
                 .addComponent(btAlterar)
                 .addGap(18, 18, 18)
                 .addComponent(btOk)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(39, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(scpVeiculo)
@@ -125,13 +133,13 @@ public class ListagemVeiculo extends javax.swing.JInternalFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(scpVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scpVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btOk)
                     .addComponent(btAlterar)
                     .addComponent(btExcluir))
-                .addGap(0, 15, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         bindingGroup.bind();
@@ -150,7 +158,6 @@ public class ListagemVeiculo extends javax.swing.JInternalFrame {
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
         
         int selecteds[] = tbVeiculo.getSelectedRows();
-        List<Veiculo> delete = new LinkedList<>();
         
         if (selecteds.length == 0)
             JOptionPane.showMessageDialog(this, "Nenhum veículo selecionado!");
@@ -158,9 +165,8 @@ public class ListagemVeiculo extends javax.swing.JInternalFrame {
                 for (int i=0; i<selecteds.length; i++)
                 {
                     selected = tbVeiculo.convertRowIndexToModel(selecteds[i]);
-                    delete.add(AutoEscolaBmi.getBaseDados().getListaVeiculos().get(selected));
-                }
-                AutoEscolaBmi.getBaseDados().getListaVeiculos().removeAll(delete);  
+                    veicDAO.excluir(AutoEscolaBmi.getBaseDados().getListaVeiculos().get(selected));
+                }                
         }
     }//GEN-LAST:event_btExcluirActionPerformed
 
@@ -184,7 +190,7 @@ public class ListagemVeiculo extends javax.swing.JInternalFrame {
     private javax.swing.JButton btAlterar;
     private javax.swing.JButton btExcluir;
     private javax.swing.JButton btOk;
-    private java.util.List<Veiculo> lstVeiculos;
+    private java.util.List<Veiculo> lstVeiculo;
     private javax.swing.JScrollPane scpVeiculo;
     private javax.swing.JTable tbVeiculo;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;

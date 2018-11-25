@@ -306,12 +306,11 @@ public class CadastroVeiculo extends javax.swing.JInternalFrame {
     
 
     private void btGerarNumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarNumActionPerformed
-        //Futuramente sera tratado como PK do Banco
-        Random Gerador = new Random();
-        String num = "";
-        for (int i=0; i<=13; i++){
-            num += Integer.toString(Gerador.nextInt(10));
-        }
+       SimpleDateFormat df = new SimpleDateFormat("ddMMYYYYHHmmssSSS");
+       Date data = new Date();
+       String num;
+       num = df.format(data.getTime());
+     
         txtNumeracao.setText(num);
         btGerarNum.setEnabled(false);
     }//GEN-LAST:event_btGerarNumActionPerformed
