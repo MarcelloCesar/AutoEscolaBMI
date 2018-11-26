@@ -15,12 +15,17 @@ public abstract class Query {
     
     protected String nomeTabela;
     protected String query;    
+    protected String extraQuery;
     protected Connection connection;
     protected PreparedStatement lastStatement;
     
+    public Query (){
+        this.extraQuery = "";
+    }
+    
     public abstract PreparedStatement getStatement() throws QueryException;
     protected PreparedStatement prepareStatement(Connection conn, String sql) throws SQLException{
-        lastStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        lastStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);        
         return this.lastStatement;
     }
     
@@ -62,5 +67,9 @@ public abstract class Query {
         ResultSet rs = this.lastStatement.getGeneratedKeys();
         rs.next();
         return rs.getInt(1);
+    }
+    
+    public void addQuery(String query){
+        this.extraQuery = query;
     }
 }

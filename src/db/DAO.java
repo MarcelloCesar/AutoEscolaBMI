@@ -28,6 +28,7 @@ public abstract class DAO<E> {
         try{
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(url,user, password);
+            conn.setTransactionIsolation(conn.TRANSACTION_READ_UNCOMMITTED);
         }catch(SQLException e){
             throw new Exception("Erro ao conectar ao banco de dados: " + e.getMessage());
         }catch(ClassNotFoundException e){
@@ -35,8 +36,8 @@ public abstract class DAO<E> {
         }
     }
     
-    public void disableAutoCommit() throws SQLException{
-        this.conn.setAutoCommit(false);
+    public void disableAutoCommit() throws SQLException{        
+        this.conn.setAutoCommit(false);        
     }
     
     public void commitWork() throws SQLException{

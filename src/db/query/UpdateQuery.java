@@ -112,7 +112,7 @@ public class UpdateQuery extends Query{
         String clausula          = this.clausulaUpdate + this.nomeTabela;
         String camposTabela      = this.getCamposTabela();
         String camposTabelaWhere = this.getCamposWhereTabela();
-        this.query = clausula + camposTabela + camposTabelaWhere;
+        this.query = clausula + camposTabela + camposTabelaWhere + this.extraQuery;
         
         return this.prepare(this.query);
     }       
