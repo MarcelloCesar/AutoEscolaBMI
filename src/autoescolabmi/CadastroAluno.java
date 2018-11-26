@@ -52,8 +52,8 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         abas.setEnabledAt(1, false);
         abas.setEnabledAt(0, true);
         this.btnAlterar.setVisible(false);
-        this.cmbCategoria.setSelectedIndex(1);
-        this.cmbCategoria.setSelectedIndex(0);
+        cmbCategoria.setSelectedItem("B");
+        cmbCategoria.setSelectedItem("A");
     }
     
     public void setAluno(Aluno a){    
@@ -82,26 +82,32 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         
         switch(cmbCategoria.getSelectedIndex()){
             case 0:
+                this.matricula.setCodCategoria("A");
                 this.alteraDescricaoCategoriaA();
                 break;
                 
             case 1:
+                this.matricula.setCodCategoria("B");
                 this.alteraDescricaoCategoriaB();
                 break;
                 
             case 2:
+                this.matricula.setCodCategoria("A/B");
                 this.alteraDescricaoCategoriaAB();
                 break;
                 
             case 3:
+                this.matricula.setCodCategoria("C");
                 this.alteraDescricaoCategoriaC();
                 break;
                 
             case 4:
+                this.matricula.setCodCategoria("D");
                 this.alterarDescricaoCategoriaD();
                 break;
                 
             case 5:
+                this.matricula.setCodCategoria("E");
                 this.alterarDescricaoCategoriaE();
                 break;                
                 
@@ -226,55 +232,45 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         TelefoneDAO telefoneDAO = new TelefoneDAO();
         
         try{
-            pessoaDAO.disableAutoCommit();
+            //pessoaDAO.disableAutoCommit();
             
             //Caso nao tenha id é uma inclusao        
-            if(this.matricula.getAtor().getIdAtor() == null){
-                this.matricula.getAtor().setDataInclusao(new Date());
-                pessoaDAO.inserir(this.matricula.getAtor());
+            if(this.matricula.getIdAtor() == null){
+                this.matricula.setDataInclusao(new Date());
+                pessoaDAO.inserir(this.matricula);
             } else {
-                pessoaDAO.alterar(this.matricula.getAtor());
+                pessoaDAO.alterar(this.matricula);
             }
             
             //Inclusao de matricula
             if(this.matricula.getCodMatricula() == null){
+                matricula.setCodMatricula(txtCodMatricula.getText());
                 alunoDAO.inserir(matricula);
             } else {
                 alunoDAO.alterar(matricula);
             }
             
-            telefoneDAO.desativarTelefones(this.matricula.getAtor().getIdAtor());
+            telefoneDAO.desativarTelefones(this.matricula.getIdAtor());
             for (Telefone telefone : telefones){
                 if(telefone.getIdAtor() == null){
-                    telefone.setIdAtor(this.matricula.getAtor().getIdAtor());
+                    telefone.setIdAtor(this.matricula.getIdAtor());
                     telefoneDAO.inserir(telefone);
                 } else {
                     telefoneDAO.alterar(telefone);
                 }
             }
-        } catch (Exception e){
             
+            //pessoaDAO.commitWork();
+            
+            JOptionPane.showMessageDialog(this,"Dados inseridos com sucesso!");        
+            dispose();
+            this.areaPai.fecharCadastroAluno();
+        } catch (Exception e){
+            matricula.setCodMatricula(null);
+            this.matricula.setIdAtor(null);
+            //pessoaDAO.rollBackTransaction();
+            JOptionPane.showMessageDialog(this,e.getMessage());
         }
-            /*
-        this.aluno.setNome(txtNome.getText());
-        this.aluno.setCpf(txtCpf.getText());
-        this.aluno.setRg(txtRg.getText());
-        this.aluno.setDtNasc(date.parse(txtDtNasc.getText()));
-        this.aluno.setTelefone(txtTelefone.getText());
-        this.aluno.setNomeMae(txtNomeMae.getText());
-        this.aluno.setNomePai(txtNomePai.getText());
-        this.aluno.setRua(txtRua.getText());
-        this.aluno.setBairro(txtBairro.getText());
-        this.aluno.setNumero(txtNumero.getText());
-        this.aluno.setNumero(txtNumero.getText());
-        this.aluno.setCategoria(this.cmbCategoria.getSelectedIndex());
-        this.aluno.setDescCategoria(this.cmbCategoria.getSelectedItem().toString());*/;
-        
-        //AutoEscolaBmi.getBaseDados().addAluno(this.aluno);        
-        JOptionPane.showMessageDialog(this,"Dados inseridos com sucesso!");
-        
-        dispose();
-        this.areaPai.fecharCadastroAluno();
     }
     
     private void alterarCadastro() throws Exception{/*
@@ -318,6 +314,7 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         txtRua.setText("");
         txtBairro.setText("");
         txtNumero.setText("");
+        cmbCategoria.setSelectedItem("B");
         cmbCategoria.setSelectedItem("A");
         btnAlterar.setVisible(false);
         btnCategoriaCadastrar.setVisible(true);
@@ -339,7 +336,7 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         try{
             Pessoa pessoa = new PessoaDAO().findByCpf(txtCpf.getText());
             if(pessoa != null){
-                this.matricula.setAtor(pessoa);
+                this.matricula = new Aluno(pessoa);
                 this.preencheDadosPessoa();
             }            
         } catch (Exception e){
@@ -348,11 +345,14 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
     }      
     
     private void preencheDadosPessoa(){
-        Pessoa p = this.matricula.getAtor();
+        Pessoa p = this.matricula;
         txtCpf.setText(p.getCpf());
         txtNome.setText(p.getNome());
         txtRg.setText(p.getRg());   
         txtDtNasc.setText(dateFormat.format(p.getDataNascimento()));
+        
+        cmbCategoria.setSelectedItem("B");
+        cmbCategoria.setSelectedItem("A");
     }
 
     /**
@@ -436,6 +436,11 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
 
         jLabel1.setText("* Nome:");
 
+        txtNome.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtNomeFocusLost(evt);
+            }
+        });
         txtNome.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtNomeKeyTyped(evt);
@@ -443,6 +448,12 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         });
 
         jLabel2.setText("* Data de Nascimento:");
+
+        txtDtNasc.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtDtNascFocusLost(evt);
+            }
+        });
 
         txtCpf.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -453,6 +464,12 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         jLabel3.setText("* CPF:");
 
         jLabel4.setText("* RG:");
+
+        txtRg.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtRgFocusLost(evt);
+            }
+        });
 
         jLabel5.setText("Nome do responsável:");
 
@@ -865,6 +882,7 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
 
     private void txtCpfFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCpfFocusLost
         this.buscaPessoaExistente();
+        this.matricula.setCpf(txtCpf.getText());
     }//GEN-LAST:event_txtCpfFocusLost
 
     private void btnAddTelefoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddTelefoneActionPerformed
@@ -970,6 +988,22 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
             }
         }
     }//GEN-LAST:event_cmbResponsavelItemStateChanged
+
+    private void txtRgFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtRgFocusLost
+        this.matricula.setRg(txtRg.getText());
+    }//GEN-LAST:event_txtRgFocusLost
+
+    private void txtNomeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNomeFocusLost
+        this.matricula.setNome(txtNome.getText());
+    }//GEN-LAST:event_txtNomeFocusLost
+
+    private void txtDtNascFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDtNascFocusLost
+        try{
+            this.matricula.setDataNascimento(dateFormat.parse(txtDtNasc.getText()));
+        } catch (ParseException e){
+            JOptionPane.showMessageDialog(this, "Data inválida");
+        }                    
+    }//GEN-LAST:event_txtDtNascFocusLost
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

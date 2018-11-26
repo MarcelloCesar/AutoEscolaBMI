@@ -109,7 +109,7 @@ public class SelectQuery extends Query{
         String clausula          = this.clausulaSelect;
         String camposTabela      = this.getCamposTabela();
         String camposTabelaWhere = this.getCamposWhereTabela();
-        this.query = clausula + camposTabela + " FROM " + this.nomeTabela + camposTabelaWhere;
+        this.query = clausula + camposTabela + " FROM " + this.nomeTabela + camposTabelaWhere + extraQuery;
         
         return this.prepare(this.query);
     }       

@@ -18,13 +18,16 @@ import model.Telefone;
  */
 public class TelefoneDAO extends DAO<Telefone>{
 
-    public TelefoneDAO() throws Exception{};
+    public TelefoneDAO() throws Exception{
+        this.tabelaBanco = "TELEFONE";
+    };
+    
     @Override
     public boolean inserir(Telefone e) throws Exception {
         InsertQuery insert = new InsertQuery(this.conn, this.tabelaBanco);
         insert.addValue("IDATOR", String.valueOf(e.getIdAtor()));
-        insert.addValue("PRIORIDADE", String.valueOf(e.getPrioridade()));
-        insert.addValue("TELEFONEATIVO", String.valueOf(e.getPrioridade()));
+        insert.addValue("PRIORIDADETELEFONE", String.valueOf(e.getPrioridade()));
+        insert.addValue("TELEFONEATIVO",e.getAtivo());
         insert.addValue("NUMERO", e.getNumero());
         
         return insert.execute();        
@@ -36,7 +39,7 @@ public class TelefoneDAO extends DAO<Telefone>{
         update.addValue("TELEFONEATIVO", String.valueOf(e.getPrioridade()));
         update.addValue("NUMERO", e.getNumero());
         update.addWhere("IDATOR", String.valueOf(e.getIdAtor()));
-        update.addWhere("PRIORIDADE", String.valueOf(e.getPrioridade()));
+        update.addWhere("PRIORIDADETELEFONE", String.valueOf(e.getPrioridade()));
         return update.execute();
     }
 

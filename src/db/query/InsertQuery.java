@@ -97,7 +97,7 @@ public class InsertQuery extends Query {
         String clausula      = this.clausulaInsert + this.nomeTabela;        
         String camposTabela  = this.getCamposTabela();
         String valoresTabela = this.getValoresTabela();
-        this.query = clausula + camposTabela + valoresTabela;
+        this.query = clausula + camposTabela + valoresTabela + this.extraQuery;
         
         return this.prepare(this.query);
     }

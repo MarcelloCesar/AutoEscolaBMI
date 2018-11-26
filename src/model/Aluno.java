@@ -4,32 +4,40 @@
  * and open the template in the editor.
  */
 package model;
+import Exceptions.AppException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 
 /**
  *
  * @author Marcello
  */
-public class Aluno {
-   private Pessoa ator;
+public class Aluno extends Pessoa {
    private String codMatricula;
    private String codCategoria;
    private Date dataMatricula;
-
-    public Aluno(){
-        this.ator = new Pessoa();
-    }
-    
-    public int getIdAtor() {
-        return ator.getIdAtor();
-    }
-    
-    public Pessoa getAtor(){
-        return this.ator;
-    }
-
-    public void setAtor(Pessoa ator) {
-        this.ator = ator;
+   
+   public Aluno(){
+       
+   }
+   
+   public Aluno(ResultSet rs){
+       this.setAlunoFromResultSet(rs);
+   }
+   
+   public void setAlunoFromResultSet(ResultSet rs){
+       try{
+        try{codMatricula  = rs.getString("CODIGOMATRICULA");} catch(SQLException e){}
+        try{codCategoria  = rs.getString("CODCATEGORIA");} catch(SQLException e){}
+        try{dataMatricula = rs.getDate("DATAMATRICULA");} catch(SQLException e){}
+       } catch (Exception e ){
+           new AppException().saveLog(this.getClass().toString() +" "+  e.getMessage());
+       }
+   }
+   
+    public Aluno (Pessoa p){
+        super(p);
     }
 
     public String getCodMatricula() {

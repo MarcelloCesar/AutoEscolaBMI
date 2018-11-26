@@ -5,6 +5,9 @@
  */
 package model;
 
+import Exceptions.AppException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 
 /**
@@ -18,6 +21,32 @@ public class Pessoa {
     private String rg;
     private Date dataInclusao;
     private Date dataNascimento;
+        
+    protected Pessoa(Pessoa p){
+        idAtor = p.getIdAtor();
+        nome   = p.getNome();
+        cpf    = p.getCpf();
+        rg     = p.getRg();
+        dataInclusao   = p.getDataInclusao();
+        dataNascimento = p.getDataNascimento();
+    }
+    
+    public Pessoa(ResultSet rs){
+        this.setPessoaFromResultSet(rs);
+    }
+    
+    public void setPessoaFromResultSet(ResultSet rs){
+        try{
+            try{idAtor = rs.getInt("IDATOR");} catch(SQLException e){}
+            try{nome   = rs.getString("NOME");} catch(SQLException e){}
+            try{cpf    = rs.getString("CPF");} catch(SQLException e){}
+            try{rg     = rs.getString("RG");} catch(SQLException e){}
+            try{dataInclusao   = rs.getDate("DATAINCLUSAO");} catch(SQLException e){}
+            try{dataNascimento = rs.getDate("DATANASCIMENTO");} catch(SQLException e){}
+        } catch (Exception e){
+            new AppException().saveLog(this.getClass().toString() +" "+  e.getMessage());
+        }
+    }
     
     public Pessoa(){
         this.idAtor = null;
@@ -27,7 +56,7 @@ public class Pessoa {
         return idAtor;
     }
 
-    public void setIdAtor(int idAtor) {
+    public void setIdAtor(Integer idAtor) {
         this.idAtor = idAtor;
     }
 

@@ -19,7 +19,7 @@ import model.Pessoa;
  * @author Marcello
  */
 public class PessoaDAO extends DAO<Pessoa>{
-    private SimpleDateFormat df;
+    private final SimpleDateFormat df;
     public PessoaDAO() throws Exception{
         this.tabelaBanco = "ATOR";
         this.df = new SimpleDateFormat("yyyy-MM-dd");
@@ -33,7 +33,7 @@ public class PessoaDAO extends DAO<Pessoa>{
         insert.addValue("RG", e.getRg());
         insert.addValue("DATAINCLUSAO", df.format(e.getDataInclusao()));
         insert.addValue("DATANASCIMENTO", df.format(e.getDataNascimento()));
-        insert.execute();
+        insert.executeUpdate();
         e.setIdAtor(insert.getGeneratedId());
              
         return true;
@@ -47,7 +47,8 @@ public class PessoaDAO extends DAO<Pessoa>{
         update.addValue("RG", e.getRg());
         update.addValue("DATANASCIMENTO", df.format(e.getDataNascimento()));
         update.addWhere("IDATOR", String.valueOf(e.getIdAtor()));
-        return update.execute();        
+        update.executeUpdate();        
+        return true;
     }
 
     @Override
@@ -73,13 +74,7 @@ public class PessoaDAO extends DAO<Pessoa>{
         ResultSet rs = select.executeQuery();
         Pessoa p = null;
         if(rs.next()){
-            p = new Pessoa();
-            p.setCpf(cpf);
-            p.setDataNascimento(rs.getDate("DATANASCIMENTO"));
-            p.setIdAtor(rs.getInt("IDATOR"));
-            p.setNome(rs.getString("NOME"));
-            p.setRg(rs.getString("RG"));
-            p.setDataInclusao(rs.getDate("DATAINCLUSAO"));            
+            p = new Pessoa(rs);         
         }
         
         //Se houver violacao do unique index de cpf e retornou mais de 1
