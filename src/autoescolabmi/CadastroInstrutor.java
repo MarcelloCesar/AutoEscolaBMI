@@ -5,6 +5,8 @@
  */
 package autoescolabmi;
 
+import db.InstrutorDAO;
+import db.PessoaDAO;
 import model.Instrutor;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -274,15 +276,18 @@ public class CadastroInstrutor extends javax.swing.JInternalFrame {
     
     private void finalizaCadastro() throws Exception{
         this.validaDadosInstrutor();
+        InstrutorDAO id = new InstrutorDAO();
+        PessoaDAO pd = new PessoaDAO();
         
-        instrutor.setNome(txtNome.getText());
+        instrutor.getAtor().setNome(txtNome.getText());
         try{
-            instrutor.setDataNascimento(date.parse(txtDataNasc.getText()));
+            instrutor.getAtor().setDataNascimento(date.parse(txtDataNasc.getText()));
         }catch(ParseException exce){
             throw new Exception ("Data de nascimento inválida");
         }
-        instrutor.setCPF(txtCpf.getText());
-        instrutor.setRg(txtRg.getText());
+        
+        instrutor.getAtor().setCpf(txtCpf.getText());
+        instrutor.getAtor().setRg(txtRg.getText());
         instrutor.setTelefone(txtTelefone.getText());
         instrutor.setEndereco(txtEndereco.getText());
         instrutor.setNumero(txtNumero.getText());
@@ -292,10 +297,15 @@ public class CadastroInstrutor extends javax.swing.JInternalFrame {
         instrutor.setRegDetran(txtReg.getText());
         
        if(ok)
-            AutoEscolaBmi.getBaseDados().addInstrutor(instrutor);
+       {
+            pd.inserir(instrutor.getAtor());
+            id.inserir(instrutor);
+       }
         else
-            AutoEscolaBmi.getBaseDados().getListaInstrutores().set(pos,instrutor);
-      
+       {
+            pd.alterar(instrutor.getAtor());
+            id.alterar(instrutor);
+       }
         JOptionPane.showMessageDialog(this,"Dados inseridos com sucesso!");
         
         areaPai.fecharCadastroInstrutor();
@@ -351,13 +361,12 @@ public class CadastroInstrutor extends javax.swing.JInternalFrame {
         this.instrutor = i;
     }
     
-    public void preencherDados(int p){
+    public void preencherDados(){
         ok = false;
-        this.pos = p;        
-        txtNome.setText(instrutor.getNome());
-        txtDataNasc.setText(date.format(instrutor.getDataNascimento()));
-        txtCpf.setText(instrutor.getCPF());
-        txtRg.setText(instrutor.getRg());
+        txtNome.setText(instrutor.getAtor().getNome());
+        txtDataNasc.setText(date.format(instrutor.getAtor().getDataNascimento()));
+        txtCpf.setText(instrutor.getAtor().getCpf());
+        txtRg.setText(instrutor.getAtor().getRg());
         txtTelefone.setText(instrutor.getTelefone());
         txtEndereco.setText(instrutor.getEndereco());
         txtNumero.setText(instrutor.getNumero());

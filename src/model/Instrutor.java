@@ -10,6 +10,77 @@ import java.beans.PropertyChangeSupport;
 import java.util.Date;
 
 public class Instrutor implements Cloneable {
+    private Pessoa ator;
+    private String endereco;
+
+    public Instrutor(){
+        ator = new Pessoa();
+        this.ator.setDataInclusao(new Date());
+
+    }
+
+    public void setAtor(Pessoa ator) {
+        this.ator = ator;
+    }
+    
+    public static final String PROP_ENDERECO = "endereco";
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        String oldEndereco = this.endereco;
+        this.endereco = endereco;
+        propertyChangeSupport.firePropertyChange(PROP_ENDERECO, oldEndereco, endereco);
+    }
+
+    private String telefone;
+
+    public static final String PROP_TELEFONE = "telefone";
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        String oldTelefone = this.telefone;
+        this.telefone = telefone;
+        propertyChangeSupport.firePropertyChange(PROP_TELEFONE, oldTelefone, telefone);
+    }
+
+    private String numero;
+
+    public static final String PROP_NUMERO = "numero";
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        String oldNumero = this.numero;
+        this.numero = numero;
+        propertyChangeSupport.firePropertyChange(PROP_NUMERO, oldNumero, numero);
+    }
+
+    private String cidade;
+
+    public static final String PROP_CIDADE = "cidade";
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        String oldCidade = this.cidade;
+        this.cidade = cidade;
+        propertyChangeSupport.firePropertyChange(PROP_CIDADE, oldCidade, cidade);
+    }
+
+
+    public Pessoa getAtor() {
+        return ator;
+    }
     
     public Instrutor getClone(){
         try{
@@ -18,20 +89,6 @@ public class Instrutor implements Cloneable {
             e.printStackTrace();
             return null;
         }
-    }
-    
-    private String Nome;
-
-    public static final String PROP_NOME = "Nome";
-
-    public String getNome() {
-        return Nome;
-    }
-
-    public void setNome(String Nome) {
-        String oldNome = this.Nome;
-        this.Nome = Nome;
-        propertyChangeSupport.firePropertyChange(PROP_NOME, oldNome, Nome);
     }
 
     private transient final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
@@ -42,105 +99,6 @@ public class Instrutor implements Cloneable {
 
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
-    }
-
-    private Date DataNascimento;
-
-    public static final String PROP_DATANASCIMENTO = "DataNascimento";
-
-    public Date getDataNascimento() {
-        return DataNascimento;
-    }
-
-    public void setDataNascimento(Date DataNascimento) {
-        Date oldDataNascimento = this.DataNascimento;
-        this.DataNascimento = DataNascimento;
-        propertyChangeSupport.firePropertyChange(PROP_DATANASCIMENTO, oldDataNascimento, DataNascimento);
-    }
-
-    private String CPF;
-
-    public static final String PROP_CPF = "CPF";
-
-    public String getCPF() {
-        return CPF;
-    }
-
-    public void setCPF(String CPF) {
-        String oldCPF = this.CPF;
-        this.CPF = CPF;
-        propertyChangeSupport.firePropertyChange(PROP_CPF, oldCPF, CPF);
-    }
-
-    private String rg;
-
-    public static final String PROP_RG = "rg";
-
-    public String getRg() {
-        return rg;
-    }
-
-    public void setRg(String rg) {
-        String oldRg = this.rg;
-        this.rg = rg;
-        propertyChangeSupport.firePropertyChange(PROP_RG, oldRg, rg);
-    }
-
-    private String Telefone;
-
-    public static final String PROP_TELEFONE = "Telefone";
-
-    public String getTelefone() {
-        return Telefone;
-    }
-
-    public void setTelefone(String Telefone) {
-        String oldTelefone = this.Telefone;
-        this.Telefone = Telefone;
-        propertyChangeSupport.firePropertyChange(PROP_TELEFONE, oldTelefone, Telefone);
-    }
-
-    private String Endereco;
-
-    public static final String PROP_ENDERECO = "Endereco";
-
-    public String getEndereco() {
-        return Endereco;
-    }
-
-    public void setEndereco(String Endereco) {
-        String oldEndereco = this.Endereco;
-        this.Endereco = Endereco;
-        propertyChangeSupport.firePropertyChange(PROP_ENDERECO, oldEndereco, Endereco);
-    }
-
-        private String Numero;
-
-    public static final String PROP_NUMERO = "Numero";
-
-    public String getNumero() {
-        return Numero;
-    }
-
-    public void setNumero(String Numero) {
-        String oldNumero = this.Numero;
-        this.Numero = Numero;
-        propertyChangeSupport.firePropertyChange(PROP_NUMERO, oldNumero, Numero);
-    }
-
-
-        private String Cidade;
-
-    public static final String PROP_CIDADE = "Cidade";
-
-    public String getCidade() {
-        return Cidade;
-    }
-
-    public void setCidade(String Cidade) {
-        String oldCidade = this.Cidade;
-        this.Cidade = Cidade;
-        propertyChangeSupport.firePropertyChange(PROP_CIDADE, oldCidade, Cidade);
     }
 
         private Date DataCad;
@@ -184,8 +142,5 @@ public class Instrutor implements Cloneable {
         this.RegDetran = RegDetran;
         propertyChangeSupport.firePropertyChange(PROP_REGDETRAN, oldRegDetran, RegDetran);
     }
-
-
-
 
 }
