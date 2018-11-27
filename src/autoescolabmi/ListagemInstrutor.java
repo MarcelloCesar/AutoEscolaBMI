@@ -5,9 +5,13 @@
  */
 package autoescolabmi;
 
+import db.InstrutorDAO;
+import db.PessoaDAO;
 import model.Instrutor;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class ListagemInstrutor extends javax.swing.JInternalFrame {
@@ -15,6 +19,8 @@ public class ListagemInstrutor extends javax.swing.JInternalFrame {
     private AreaDeTrabalho areaPai;
     private Instrutor inst;
     private int selected;
+    InstrutorDAO instDAO;
+    PessoaDAO pd;
     
     public ListagemInstrutor(AreaDeTrabalho areaPai) {
         this.areaPai = areaPai;
@@ -31,7 +37,12 @@ public class ListagemInstrutor extends javax.swing.JInternalFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        lstInstrutor = lstInstrutor = AutoEscolaBmi.getBaseDados().getListaInstrutores();
+        try {
+            instrutorDAO1 = new db.InstrutorDAO();
+        } catch (java.lang.Exception e1) {
+            e1.printStackTrace();
+        }
+        lstInstrutor = instrutorDAO1.listar();
         scpInstrutor = new javax.swing.JScrollPane();
         tbInstrutor = new javax.swing.JTable();
         btnExcluir = new javax.swing.JButton();
@@ -58,14 +69,14 @@ public class ListagemInstrutor extends javax.swing.JInternalFrame {
         });
 
         org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, lstInstrutor, tbInstrutor);
-        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${nome}"));
-        columnBinding.setColumnName("Nome");
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${ator}"));
+        columnBinding.setColumnName("Ator");
+        columnBinding.setColumnClass(model.Pessoa.class);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${regDetran}"));
+        columnBinding.setColumnName("Reg Detran");
         columnBinding.setColumnClass(String.class);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${dataNascimento}"));
-        columnBinding.setColumnName("Data Nascimento");
-        columnBinding.setColumnClass(java.util.Date.class);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${CPF}"));
-        columnBinding.setColumnName("CPF");
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${telefone}"));
+        columnBinding.setColumnName("Telefone");
         columnBinding.setColumnClass(String.class);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${cidade}"));
         columnBinding.setColumnName("Cidade");
@@ -139,28 +150,33 @@ public class ListagemInstrutor extends javax.swing.JInternalFrame {
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
         if(this.tbInstrutor.getSelectedRow() != -1){
             this.areaPai.abrirCadastroInstrutor();
-            this.areaPai.getCadastroInstrutor().setInstrutor(
-                    AutoEscolaBmi.getBaseDados().getListaInstrutores().get(
-                        this.tbInstrutor.getSelectedRow()
-                    )                
-            );
-            this.areaPai.getCadastroInstrutor().preencherDados(this.tbInstrutor.getSelectedRow());
+            this.areaPai.getCadastroInstrutor().setInstrutor(lstInstrutor.get(this.tbInstrutor.getSelectedRow()));
+            this.areaPai.getCadastroInstrutor().preencherDados();
         } else {
             JOptionPane.showMessageDialog(this, "Nenhum Instrutor selecionado!");
         }         
     }//GEN-LAST:event_btnAlterarActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
-       int selecteds[] = tbInstrutor.getSelectedRows();
-        List<Instrutor> delete = new LinkedList<>();
+        try {
+             instDAO = new InstrutorDAO();
+             pd = new PessoaDAO();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+        int selecteds[] = tbInstrutor.getSelectedRows();
         if (selecteds.length == 0){
             JOptionPane.showMessageDialog(this, "Nenhum instrutor selecionado!");
         } else {
             for (int i=0; i<selecteds.length; i++){
                 selected = tbInstrutor.convertRowIndexToModel(selecteds[i]);
-                delete.add(AutoEscolaBmi.getBaseDados().getListaInstrutores().get(selected));
+                try {
+                    instDAO.excluir(lstInstrutor.get(selected));
+                    pd.excluir(lstInstrutor.get(selected).getAtor());
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                }
             }
-            AutoEscolaBmi.getBaseDados().getListaInstrutores().removeAll(delete); 
         }
     }//GEN-LAST:event_btnExcluirActionPerformed
 
@@ -173,6 +189,7 @@ public class ListagemInstrutor extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnAlterar;
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnNovo;
+    private db.InstrutorDAO instrutorDAO1;
     private java.util.List<Instrutor> lstInstrutor;
     private javax.swing.JScrollPane scpInstrutor;
     private javax.swing.JTable tbInstrutor;

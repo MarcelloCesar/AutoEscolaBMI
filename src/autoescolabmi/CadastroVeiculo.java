@@ -5,6 +5,7 @@
  */
 package autoescolabmi;
 
+import db.VeiculoDAO;
 import model.Veiculo;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,6 +23,7 @@ public class CadastroVeiculo extends javax.swing.JInternalFrame {
      * Creates new form CadastroVeiculo
      */
     private Veiculo veiculo;
+    private VeiculoDAO veicDAO;
     private SimpleDateFormat date;
     private Date dataCad;
     private AreaDeTrabalho a;
@@ -306,12 +308,11 @@ public class CadastroVeiculo extends javax.swing.JInternalFrame {
     
 
     private void btGerarNumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarNumActionPerformed
-        //Futuramente sera tratado como PK do Banco
-        Random Gerador = new Random();
-        String num = "";
-        for (int i=0; i<=13; i++){
-            num += Integer.toString(Gerador.nextInt(10));
-        }
+       SimpleDateFormat df = new SimpleDateFormat("ddMMYYYYHHmmssSSS");
+       Date data = new Date();
+       String num;
+       num = df.format(data.getTime());
+     
         txtNumeracao.setText(num);
         btGerarNum.setEnabled(false);
     }//GEN-LAST:event_btGerarNumActionPerformed
@@ -362,11 +363,28 @@ public class CadastroVeiculo extends javax.swing.JInternalFrame {
         veiculo.setHistorico(txtHistorico.getText());
         
         if(ok)
-            AutoEscolaBmi.getBaseDados().addVeiculo(veiculo);
+        {
+                
+            try{
+                veicDAO = new VeiculoDAO();
+                if(veicDAO.inserir(veiculo))
+                    JOptionPane.showMessageDialog(this, "Veiculo inserido com sucesso!");
+                }
+            catch(Exception e)
+            {
+                JOptionPane.showMessageDialog(this, e.getMessage());
+            }
+        }
         else
-            AutoEscolaBmi.getBaseDados().getListaVeiculos().set(pos,veiculo);
-      
-        JOptionPane.showMessageDialog(this,"Dados inseridos com sucesso!");
+        {
+            try{
+                veicDAO = new VeiculoDAO(); 
+                veicDAO.alterar(veiculo);
+            }catch(Exception ex)
+            {
+                JOptionPane.showMessageDialog(this,ex.getMessage());
+            }         
+        }
         
         a.fecharCadastroVeiculo();
         this.dispose();
@@ -402,9 +420,8 @@ public class CadastroVeiculo extends javax.swing.JInternalFrame {
         this.veiculo = v;
     }
 
-    public void preencheDados(int p){
+    public void preencheDados(){
         ok = false;
-        this.pos = p;
         btGerarNum.setEnabled(false);
         txtAno.setText(veiculo.getAno());
         txtCor.setText(veiculo.getCor());

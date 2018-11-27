@@ -2,9 +2,11 @@
 
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
   <NonVisualComponents>
+    <Component class="db.InstrutorDAO" name="instrutorDAO1">
+    </Component>
     <Component class="java.util.List" name="lstInstrutor">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="lstInstrutor = autoescolabmi.AutoEscolaBmi.getBaseDados().getListaInstrutores()"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="instrutorDAO1.listar()"/>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Instrutor&gt;"/>
       </AuxValues>
     </Component>
@@ -73,13 +75,13 @@
         <Component class="javax.swing.JTable" name="tbInstrutor">
           <BindingProperties>
             <BindingProperty name="elements" source="lstInstrutor" target="tbInstrutor" targetPath="elements" updateStrategy="0" immediately="true">
-              <Subbinding sourcePath="${nome}">
+              <Subbinding sourcePath="${ator}">
+                <BindingParameter name="javax.swing.binding.ParameterKeys.COLUMN_CLASS" value="model.Pessoa.class"/>
+              </Subbinding>
+              <Subbinding sourcePath="${regDetran}">
                 <BindingParameter name="javax.swing.binding.ParameterKeys.COLUMN_CLASS" value="String.class"/>
               </Subbinding>
-              <Subbinding sourcePath="${dataNascimento}">
-                <BindingParameter name="javax.swing.binding.ParameterKeys.COLUMN_CLASS" value="java.util.Date.class"/>
-              </Subbinding>
-              <Subbinding sourcePath="${CPF}">
+              <Subbinding sourcePath="${telefone}">
                 <BindingParameter name="javax.swing.binding.ParameterKeys.COLUMN_CLASS" value="String.class"/>
               </Subbinding>
               <Subbinding sourcePath="${cidade}">
