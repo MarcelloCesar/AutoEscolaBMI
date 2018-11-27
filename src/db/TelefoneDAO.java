@@ -14,7 +14,7 @@ import model.Telefone;
 
 /**
  *
- * @author Gideon
+ * @author Marcllo
  */
 public class TelefoneDAO extends DAO<Telefone>{
 
@@ -36,7 +36,7 @@ public class TelefoneDAO extends DAO<Telefone>{
     @Override
     public boolean alterar(Telefone e) throws Exception {
         UpdateQuery update = new UpdateQuery(this.conn, this.tabelaBanco);
-        update.addValue("TELEFONEATIVO", String.valueOf(e.getPrioridade()));
+        update.addValue("TELEFONEATIVO", String.valueOf(e.getAtivo()));
         update.addValue("NUMERO", e.getNumero());
         update.addWhere("IDATOR", String.valueOf(e.getIdAtor()));
         update.addWhere("PRIORIDADETELEFONE", String.valueOf(e.getPrioridade()));

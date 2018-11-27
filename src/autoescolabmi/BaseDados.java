@@ -28,7 +28,7 @@ public class BaseDados {
         
         this.lstAlunos    = new LinkedList<>();
         this.lstAlunos    = org.jdesktop.observablecollections.ObservableCollections.observableList(this.lstAlunos);
-        this.lstVeiculos  = veicDAO.listar();
+        try{this.lstVeiculos  = new VeiculoDAO().listar();}catch (Exception e){};
         this.lstInstrutor = new LinkedList<>();
         this.lstInstrutor = org.jdesktop.observablecollections.ObservableCollections.observableList(this.lstInstrutor);
     }    

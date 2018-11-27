@@ -22,9 +22,9 @@ public abstract class DAO<E> {
     protected String tabelaBanco;
     
     public DAO() throws Exception{
-        String url = "jdbc:mysql://127.0.0.1:3307/autoescolabmi";
+        String url = "jdbc:mysql://127.0.0.1:3306/autoescolabmi";
         String user = "root";
-        String password = "usbw";
+        String password = "";
         try{
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(url,user, password);

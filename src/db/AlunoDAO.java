@@ -31,10 +31,10 @@ public class AlunoDAO extends DAO<Aluno> {
         tabela += " JOIN ATOR ON MATRICULA.IDATOR = ATOR.IDATOR ";
         
         SelectQuery select = new SelectQuery(this.conn, tabela);
-        select.addCampo("ATOR.IDATOR");
-        select.addCampo("ATOR.NOME");
+        select.addCampo("ATOR.IDATOR IDATOR");
+        select.addCampo("ATOR.NOME NOME");
         select.addCampo("MATRICULA.DATAMATRICULA");
-        select.addCampo("ATOR.CPF");        
+        select.addCampo("ATOR.CPF CPF");        
         select.addCampo("MATRICULA.CODIGOMATRICULA");
         select.addCampo("MATRICULA.CODCATEGORIA");
         List<Aluno> lst = new LinkedList<>();
@@ -66,7 +66,7 @@ public class AlunoDAO extends DAO<Aluno> {
         UpdateQuery update = new UpdateQuery(this.conn, this.tabelaBanco);
         update.addValue("IDATOR", String.valueOf(aluno.getIdAtor()));
         update.addValue("CODCATEGORIA", aluno.getCodCategoria());
-        update.addWhere("CODMATRICULA", aluno.getCodMatricula());
+        update.addWhere("CODIGOMATRICULA", aluno.getCodMatricula());
         
         update.executeUpdate();
         return true;
@@ -135,5 +135,22 @@ public class AlunoDAO extends DAO<Aluno> {
             lst.add(a);
         }
         return lst;
+    }
+    
+    public Aluno encontrarMatricula(String matricula) throws Exception{
+        String TABELA = this.tabelaBanco;
+        TABELA += " JOIN ATOR ON MATRICULA.IDATOR = ATOR.IDATOR ";
+        
+        SelectQuery select = new SelectQuery(this.conn, TABELA);
+        select.addCampoWhere("MATRICULA.CODIGOMATRICULA", String.valueOf(matricula));
+        ResultSet rs = select.executeQuery();
+        rs.next();
+        
+        Pessoa p = new Pessoa(rs);
+        Aluno a = new Aluno(p);
+        a.setAlunoFromResultSet(rs);
+        
+        return a;      
+        
     }
 }

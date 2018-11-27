@@ -222,12 +222,14 @@ public class ListagemAluno extends javax.swing.JInternalFrame {
    
         if(this.tblListagemAlunos.getSelectedRow() != -1){
             this.areaPai.abrirCadastroAluno();
-            this.areaPai.getCadastroAluno().setAluno(
+            /*this.areaPai.getCadastroAluno().setAluno(
                     AutoEscolaBmi.getBaseDados().getListaAlunos().get(
                         tblListagemAlunos.getSelectedRow()
                     )                
-            );
-            this.areaPai.getCadastroAluno().preencheDados();
+            );*/
+            this.areaPai.getCadastroAluno().preencheDados(AutoEscolaBmi.getBaseDados().getListaAlunos().get(
+                        tblListagemAlunos.getSelectedRow()
+                    ).getCodMatricula());
         } else {
             JOptionPane.showMessageDialog(this, "Nenhum aluno selecionado!");
         }        

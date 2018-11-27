@@ -9,9 +9,9 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Date;
 
-public class Instrutor implements Cloneable {
+public class Instrutor extends Pessoa implements Cloneable {
     private Pessoa ator;
-    private String endereco;
+    
 
     public Instrutor(){
         ator = new Pessoa();
@@ -23,18 +23,6 @@ public class Instrutor implements Cloneable {
         this.ator = ator;
     }
     
-    public static final String PROP_ENDERECO = "endereco";
-
-    public String getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(String endereco) {
-        String oldEndereco = this.endereco;
-        this.endereco = endereco;
-        propertyChangeSupport.firePropertyChange(PROP_ENDERECO, oldEndereco, endereco);
-    }
-
     private String telefone;
 
     public static final String PROP_TELEFONE = "telefone";

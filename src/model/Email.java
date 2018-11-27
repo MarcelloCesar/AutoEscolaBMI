@@ -10,16 +10,20 @@ package model;
  * @author Marcello
  */
 public class Email {
-    private int idAtor;
+    private Integer idAtor;
     private int prioridade;
-    private boolean ativo;
+    private String ativo;
     private String email;
 
-    public int getIdAtor() {
+    public String getAtivo() {
+        return ativo;
+    }
+
+    public Integer getIdAtor() {
         return idAtor;
     }
 
-    public void setIdAtor(int idAtor) {
+    public void setIdAtor(Integer idAtor) {
         this.idAtor = idAtor;
     }
 
@@ -31,11 +35,11 @@ public class Email {
         this.prioridade = prioridade;
     }
 
-    public boolean isAtivo() {
+    public String isAtivo() {
         return ativo;
     }
 
-    public void setAtivo(boolean ativo) {
+    public void setAtivo(String ativo) {
         this.ativo = ativo;
     }
 

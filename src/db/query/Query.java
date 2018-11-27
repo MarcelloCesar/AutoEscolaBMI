@@ -72,4 +72,8 @@ public abstract class Query {
     public void addQuery(String query){
         this.extraQuery = query;
     }
+    
+    public String getQuery(){
+        return query;
+    }
 }

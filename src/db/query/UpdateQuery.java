@@ -68,7 +68,7 @@ public class UpdateQuery extends Query{
         }
         String camposTabela = "";
         if(this.camposWhere.size() > 0){
-            camposTabela = " WHERE " + this.campos.get(0) + " = ?";        
+            camposTabela = " WHERE " + this.camposWhere.get(0) + " = ?";        
             if(this.camposWhere.size() > 1){
                 for(int i=1; i<camposWhere.size(); i++){
                     camposTabela += " AND " + this.camposWhere.get(i) + " = ?";

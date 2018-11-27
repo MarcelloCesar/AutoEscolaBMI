@@ -6,7 +6,9 @@
 package autoescolabmi;
 
 import db.AlunoDAO;
+import db.EmailDAO;
 import db.PessoaDAO;
+import db.ResponsavelDAO;
 import db.TelefoneDAO;
 import model.Aluno;
 import java.text.ParseException;
@@ -17,6 +19,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import model.Email;
 import model.Pessoa;
+import model.Responsavel;
 import model.Telefone;
 
 /**
@@ -26,7 +29,7 @@ import model.Telefone;
 public class CadastroAluno extends javax.swing.JInternalFrame {
     
     private Aluno matricula;
-    private List<Pessoa> responsaveis;
+    private List<Responsavel> responsaveis;
     private List<Telefone> telefones;
     private List<Email> emails;
     
@@ -51,7 +54,6 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         
         abas.setEnabledAt(1, false);
         abas.setEnabledAt(0, true);
-        this.btnAlterar.setVisible(false);
         cmbCategoria.setSelectedItem("B");
         cmbCategoria.setSelectedItem("A");
     }
@@ -60,22 +62,22 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         
     }       
     
-    public void preencheDados(){/*
-        txtBairro.setText(this.aluno.getBairro());
-        this.cmbCategoria.setSelectedIndex(1);
-        this.cmbCategoria.setSelectedIndex(this.aluno.getCategoria());
-        txtCpf.setText(this.aluno.getCpf());
-        txtDtNasc.setText(date.format(this.aluno.getDtNasc()));
-        txtNome.setText(this.aluno.getNome());
-        txtNomeMae.setText(this.aluno.getNomeMae());
-        txtNomePai.setText(this.aluno.getNomePai());
-        txtNumero.setText(this.aluno.getNumero());
-        txtRg.setText(this.aluno.getRg());
-        txtRua.setText(this.aluno.getRua());
-        txtTelefone.setText(this.aluno.getTelefone());*/
+    public void preencheDados(String cod){
+        try{
+            this.matricula = new AlunoDAO().encontrarMatricula(cod);
+            txtCodMatricula.setText(String.valueOf(matricula.getCodMatricula()));
+            txtDataMatricula.setText(matricula.getDataMatricula() == null ? " " : dateFormat.format(matricula.getDataMatricula()));            
+            preencheDadosPessoa();
+            cmbCategoria.setSelectedItem(matricula.getCodCategoria());
+            /*txtCpf.setText(matricula.getCpf());
+            txtRg.setText(matricula.getRg());
+            txtNome.setText(matricula.)*/
+            
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "Erro ao carregar aluno: " +  e.getMessage());
+        }
         
-        this.btnCategoriaCadastrar.setVisible(false);
-        this.btnAlterar.setVisible(true);
+        
     }
     
     private void alterarDescricaoCategoria() throws Exception{
@@ -230,11 +232,16 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         PessoaDAO pessoaDAO     = new PessoaDAO();
         AlunoDAO alunoDAO       = new AlunoDAO();
         TelefoneDAO telefoneDAO = new TelefoneDAO();
+        EmailDAO    emailDAO    = new EmailDAO();
+        ResponsavelDAO respDAO  = new ResponsavelDAO();
         
         try{
-            //pessoaDAO.disableAutoCommit();
             
-            //Caso nao tenha id é uma inclusao        
+            //Caso nao tenha id é uma inclusao      
+            this.matricula.setEndereco(txtBairro.getText() + " " + 
+                                       txtRua.getText() + " " + 
+                                       txtNumero.getText());
+            
             if(this.matricula.getIdAtor() == null){
                 this.matricula.setDataInclusao(new Date());
                 pessoaDAO.inserir(this.matricula);
@@ -254,13 +261,34 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
             for (Telefone telefone : telefones){
                 if(telefone.getIdAtor() == null){
                     telefone.setIdAtor(this.matricula.getIdAtor());
+                    telefone.setPrioridade(telefoneDAO.buscaUltimaPrioridade());
                     telefoneDAO.inserir(telefone);
                 } else {
                     telefoneDAO.alterar(telefone);
                 }
+            }  
+            
+            emailDAO.desativarEmail(this.matricula.getIdAtor());
+            for (Email e : emails){
+                if(e.getIdAtor() == null){
+                    e.setIdAtor(this.matricula.getIdAtor());
+                    e.setPrioridade(emailDAO.buscaUltimaPrioridade());
+                    emailDAO.inserir(e);
+                } else {
+                    emailDAO.alterar(e);
+                }
             }
             
-            //pessoaDAO.commitWork();
+            respDAO.desativarResp(this.matricula.getIdAtor());
+            for (Responsavel r : responsaveis){
+                if(r.getIdAtor() == null){
+                    r.setIdAtor(this.matricula.getIdAtor());
+                    r.setPrioridade(respDAO.buscaUltimaPrioridade());
+                    respDAO.inserir(r);
+                } else {
+                    respDAO.alterar(r);
+                }
+            }   
             
             JOptionPane.showMessageDialog(this,"Dados inseridos com sucesso!");        
             dispose();
@@ -268,31 +296,10 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         } catch (Exception e){
             matricula.setCodMatricula(null);
             this.matricula.setIdAtor(null);
-            //pessoaDAO.rollBackTransaction();
             JOptionPane.showMessageDialog(this,e.getMessage());
         }
     }
-    
-    private void alterarCadastro() throws Exception{/*
-        this.aluno.setNome(txtNome.getText());
-        this.aluno.setCpf(txtCpf.getText());
-        this.aluno.setRg(txtRg.getText());
-        this.aluno.setDtNasc(date.parse(txtDtNasc.getText()));
-        this.aluno.setTelefone(txtTelefone.getText());
-        this.aluno.setNomeMae(txtNomeMae.getText());
-        this.aluno.setNomePai(txtNomePai.getText());
-        this.aluno.setRua(txtRua.getText());
-        this.aluno.setBairro(txtBairro.getText());
-        this.aluno.setNumero(txtNumero.getText());
-        this.aluno.setCategoria(this.cmbCategoria.getSelectedIndex());
-        this.aluno.setDescCategoria(this.cmbCategoria.getSelectedItem().toString());*/
         
-        JOptionPane.showMessageDialog(this,"Dados alterados com sucesso!");
-        
-        dispose();
-        this.areaPai.fecharCadastroAluno();
-    }    
-    
     private void limparCampos(){
         this.matricula = new Aluno();
         this.responsaveis = new LinkedList<>();
@@ -316,7 +323,6 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         txtNumero.setText("");
         cmbCategoria.setSelectedItem("B");
         cmbCategoria.setSelectedItem("A");
-        btnAlterar.setVisible(false);
         btnCategoriaCadastrar.setVisible(true);
     }
     
@@ -405,7 +411,6 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         jLabel13 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtRequisitosCategoria = new javax.swing.JTextArea();
-        btnAlterar = new javax.swing.JButton();
         btnCategoriaCadastrar = new javax.swing.JButton();
 
         setClosable(true);
@@ -741,14 +746,7 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         txtRequisitosCategoria.setAutoscrolls(false);
         jScrollPane2.setViewportView(txtRequisitosCategoria);
 
-        btnAlterar.setText("Alterar");
-        btnAlterar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAlterarActionPerformed(evt);
-            }
-        });
-
-        btnCategoriaCadastrar.setText("Cadastrar");
+        btnCategoriaCadastrar.setText("Salvar");
         btnCategoriaCadastrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCategoriaCadastrarActionPerformed(evt);
@@ -776,9 +774,7 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, abaCategoriaLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(abaCategoriaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnCategoriaCadastrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAlterar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(btnCategoriaCadastrar)))
                 .addContainerGap())
         );
         abaCategoriaLayout.setVerticalGroup(
@@ -798,9 +794,7 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
                 .addComponent(jLabel13)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnAlterar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
                 .addComponent(btnCategoriaCadastrar)
                 .addContainerGap())
         );
@@ -847,14 +841,6 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         this.areaPai.fecharCadastroAluno();
     }//GEN-LAST:event_formInternalFrameClosed
 
-    private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
-        try{
-            this.alterarCadastro();                
-        } catch (Exception e){
-            JOptionPane.showMessageDialog(this,e.getMessage()); 
-        }
-    }//GEN-LAST:event_btnAlterarActionPerformed
-
     private void btnDadosPessoaisAvancarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDadosPessoaisAvancarActionPerformed
         try{
             this.avancarDadosPessoais();
@@ -892,8 +878,7 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
                                 
                 try{
                     Telefone telefone = new Telefone();
-                    telefone.setNumero(tel);
-                    telefone.setPrioridade(new TelefoneDAO().buscaUltimaPrioridade());
+                    telefone.setNumero(tel);                    
                     telefone.setAtivo("T");
 
                     telefones.add(telefone);
@@ -912,6 +897,11 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
         if(btnAddEmail.getText().equals("+")){
             String email = JOptionPane.showInputDialog("Novo Email: ");
             if(email != null){
+                Email e = new Email();
+                e.setEmail(email);
+                e.setAtivo("T");
+                
+                emails.add(e);
                 cmbEmail.addItem(email);
                 cmbEmail.setSelectedItem(email);
             }
@@ -929,10 +919,10 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
                 resp = JOptionPane.showInputDialog("CPF Responsável: ");
                 if(resp != null){
                     try{
-                        Pessoa responsavel = new PessoaDAO().findByCpf(resp);
-
+                        Responsavel responsavel = new Responsavel(new PessoaDAO().findByCpf(resp));
+                        responsavel.setAtivo("T");
                         //nullpointerexception se nao encontrou                    
-                        resp = responsavel.getNome();                   
+                        resp = responsavel.getResponsavel().getNome();                   
                         this.responsaveis.add(responsavel); 
                         
                         encontrado = true;
@@ -1013,7 +1003,6 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnAddEmail;
     private javax.swing.JButton btnAddResponsavel;
     private javax.swing.JButton btnAddTelefone;
-    private javax.swing.JButton btnAlterar;
     private javax.swing.JButton btnCategoriaCadastrar;
     private javax.swing.JToggleButton btnDadosPessoaisAvancar;
     private javax.swing.JComboBox<String> cmbCategoria;

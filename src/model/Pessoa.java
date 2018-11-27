@@ -21,7 +21,9 @@ public class Pessoa {
     private String rg;
     private Date dataInclusao;
     private Date dataNascimento;
-        
+    private String endereco;
+
+     
     protected Pessoa(Pessoa p){
         idAtor = p.getIdAtor();
         nome   = p.getNome();
@@ -104,4 +106,13 @@ public class Pessoa {
     public String toString(){
         return this.nome;
     }
+    
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+       
 }
